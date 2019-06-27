@@ -72,7 +72,7 @@ awk 'BEGIN{a=0}{if(a==1){sub("#","",$0);a=0}if($0=="#[multilib]"){sub("#","",$0)
 rm /etc/pacman.conf.bak
 
 print "Install official packages"
-pacman -Syy --noconfirm efibootmgr intel-ucode networkmanager gnome-shell-extensions gdm gnome-control-center gnome-terminal gnome-system-monitor gnome-tweaks nautilus noto-fonts chromium docker code qemu virt-manager ovmf wine xdg-user-dirs git go nvidia steam gimp docker jdk-openjdk libreoffice-fresh vim cups vlc eog okular autorandr
+pacman -Syy --noconfirm efibootmgr intel-ucode networkmanager gnome-shell-extensions gdm gnome-control-center gnome-terminal gnome-system-monitor gnome-tweaks nautilus noto-fonts chromium docker code qemu virt-manager ovmf wine xdg-user-dirs git go nvidia steam gimp docker jdk-openjdk libreoffice-fresh vim cups vlc eog okular autorandr cmake
 
 print "Make OS bootable"
 SWAP_FILE_OFFSET=$(filefrag -v /swapfile | awk '{ if($1=="0:"){print $4} }' | sed 's/\.//g')
