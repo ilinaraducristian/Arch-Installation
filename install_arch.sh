@@ -13,7 +13,13 @@ print "Set NTP time"
 timedatectl set-ntp true
 
 print "Set Romanian mirror"
-printf "Server = http://mirrors.nxthost.com/archlinux/\$repo/os/\$arch\n" > /etc/pacman.d/mirrorlist
+printf "Server = http://archlinux.mirrors.linux.ro/\$repo/os/\$arch
+Server = http://mirrors.m247.ro/archlinux/\$repo/os/\$arch
+Server = http://mirrors.nav.ro/archlinux/\$repo/os/\$arch
+Server = http://mirrors.nxthost.com/archlinux/\$repo/os/\$arch
+Server = https://mirrors.nxthost.com/archlinux/\$repo/os/\$arch
+Server = http://mirrors.pidginhost.com/arch/\$repo/os/\$arch
+Server = https://mirrors.pidginhost.com/arch/\$repo/os/\$arch\n" > /etc/pacman.d/mirrorlist
 
 print "Install arch"
 mkdir /mnt/boot
@@ -37,7 +43,6 @@ hwclock --systohc
 print "Generate locale"
 LOCALES[0]="en_US.UTF-8 UTF-8"
 LOCALES[1]="ro_RO.UTF-8 UTF-8"
-LOCALES[2]="ja_JP.UTF-8 UTF-8"
 
 for i in {0..2}; do
     sed -i "s/#${LOCALES[$i]}/${LOCALES[$i]}/g" /etc/locale.gen
@@ -52,11 +57,11 @@ LC_MEASUREMENT=ro_RO.UTF-8\n" > /etc/locale.conf
 locale-gen
 
 print "Set hostname"
-printf "reydw-0\n" > /etc/hostname
-printf "127.0.0.1\tlocalhost\n::1\t\tlocalhost\n127.0.1.1\treydw-0.localdomain\treydw-0\n" > /etc/hosts
+printf "reydw-1\n" > /etc/hostname
+printf "127.0.0.1\tlocalhost\n::1\t\tlocalhost\n127.0.1.1\treydw-1.localdomain\treydw-1\n" > /etc/hosts
 
 print "Make swapfile"
-fallocate -l 12G /swapfile
+fallocate -l 6G /swapfile
 chmod 600 /swapfile
 mkswap /swapfile
 
@@ -72,7 +77,7 @@ awk 'BEGIN{a=0}{if(a==1){sub("#","",$0);a=0}if($0=="#[multilib]"){sub("#","",$0)
 rm /etc/pacman.conf.bak
 
 print "Install official packages"
-pacman -Syy --noconfirm efibootmgr intel-ucode networkmanager gnome-shell-extensions gdm gnome-control-center gnome-terminal gnome-system-monitor gnome-tweaks gnome-disk-utility nautilus noto-fonts ttf-liberation ttf-dejavu chromium docker code qemu virt-manager ovmf wine xdg-user-dirs git go nvidia steam gimp docker jdk-openjdk libreoffice-fresh vim cups vlc eog okular autorandr cmake openssh patchelf gdb samba docker-compose file-roller
+pacman -Syy --noconfirm efibootmgr intel-ucode networkmanager gnome-shell-extensions gdm gnome-control-center gnome-terminal gnome-system-monitor gnome-tweaks gnome-disk-utility nautilus noto-fonts ttf-liberation ttf-dejavu chromium docker code qemu virt-manager ovmf wine xdg-user-dirs git go nvidia steam gimp docker jdk-openjdk libreoffice-fresh vim cups vlc eog okular autorandr cmake openssh gdb samba docker-compose file-roller lib32-libpulse
 
 print "Make OS bootable"
 SWAP_FILE_OFFSET=$(filefrag -v /swapfile | awk '{ if($1=="0:"){print $4} }' | sed 's/\.//g')
