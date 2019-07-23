@@ -6,20 +6,19 @@ print() {
 
 if [ $# -eq 0 ]; then
 
+print "Partition disk"
+printf "label: gpt\nlabel-id: 3DF407DD-3AF8-F14D-A77D-BF2C51A1F8A4\ndevice: /dev/sda\nunit: sectors\nfirst-lba: 2048\nlast-lba: 468862094\n/dev/sda1 : start=        2048, size=     2097152, type=C12A7328-F81F-11D2-BA4B-00A0C93EC93B, uuid=765CD0DC-177F-194F-A709-839EDBD37998\n/dev/sda2 : start=     2099200, size=   466762895, type=4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709, uuid=56AC158C-E125-8849-9AB3-09A30943E6B4" | sfdisk /dev/sda
+mkfs.fat -F32 /dev/sda1
+mkfs.ext4 /dev/sda2
+
 print "Mount /dev/sda2 root partition"
 mount /dev/sda2 /mnt
 
 print "Set NTP time"
 timedatectl set-ntp true
 
-print "Set Romanian mirror"
-printf "Server = http://archlinux.mirrors.linux.ro/\$repo/os/\$arch
-Server = http://mirrors.m247.ro/archlinux/\$repo/os/\$arch
-Server = http://mirrors.nav.ro/archlinux/\$repo/os/\$arch
-Server = http://mirrors.nxthost.com/archlinux/\$repo/os/\$arch
-Server = https://mirrors.nxthost.com/archlinux/\$repo/os/\$arch
-Server = http://mirrors.pidginhost.com/arch/\$repo/os/\$arch
-Server = https://mirrors.pidginhost.com/arch/\$repo/os/\$arch\n" > /etc/pacman.d/mirrorlist
+print "Set Romanian mirrors"
+printf "Server = http://archlinux.mirrors.linux.ro/\$repo/os/\$arch\nServer = http://mirrors.m247.ro/archlinux/\$repo/os/\$arch\nServer = http://mirrors.nav.ro/archlinux/\$repo/os/\$arch\nServer = http://mirrors.nxthost.com/archlinux/\$repo/os/\$arch\nServer = https://mirrors.nxthost.com/archlinux/\$repo/os/\$arch\nServer = http://mirrors.pidginhost.com/arch/\$repo/os/\$arch\nServer = https://mirrors.pidginhost.com/arch/\$repo/os/\$arch\n" > /etc/pacman.d/mirrorlist
 
 print "Install arch"
 mkdir /mnt/boot
@@ -48,12 +47,7 @@ for i in {0..2}; do
     sed -i "s/#${LOCALES[$i]}/${LOCALES[$i]}/g" /etc/locale.gen
 done
 
-printf "LANG=en_US.UTF-8
-LC_NUMERIC=en_US.UTF-8
-LC_TIME=ro_RO.UTF-8
-LC_MONETARY=en_US.UTF-8
-LC_PAPER=ro_RO.UTF-8
-LC_MEASUREMENT=ro_RO.UTF-8\n" > /etc/locale.conf
+printf "LANG=en_US.UTF-8\nLC_NUMERIC=en_US.UTF-8\nLC_TIME=ro_RO.UTF-8\nLC_MONETARY=en_US.UTF-8\nLC_PAPER=ro_RO.UTF-8\nLC_MEASUREMENT=ro_RO.UTF-8\n" > /etc/locale.conf
 locale-gen
 
 print "Set hostname"
@@ -66,10 +60,7 @@ chmod 600 /swapfile
 mkswap /swapfile
 
 print "Generate fstab"
-printf "# <device>\t<dir>\t<type>\t<options>\t<dump>\t<fsck>\n" > /etc/fstab
-printf "/dev/sda1\t/boot\tvfat\tdefaults\t0\t0\n" >> /etc/fstab
-printf "/dev/sda2\t/\text4\trw,relatime\t0\t1\n" >> /etc/fstab
-printf "/swapfile\tnone\tswap\tsw\t\t0\t0\n" >> /etc/fstab
+printf "# <device>\t<dir>\t<type>\t<options>\t<dump>\t<fsck>\ndev/sda1\t/boot\tvfat\tdefaults\t0\t0\n/dev/sda2\t/\text4\trw,relatime\t0\t1\n/swapfile\tnone\tswap\tsw\t\t0\t0\n" > /etc/fstab
 
 print "Enable multilib repositories"
 mv /etc/pacman.conf /etc/pacman.conf.bak
